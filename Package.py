@@ -6,6 +6,7 @@ from sh import sudo
 import requests
 import re
 import os
+import shutil
 
 class Package(object):
     def __init__(self, name, path = None):
@@ -16,6 +17,7 @@ class Package(object):
         self.aur = False
         self.upToDate = False
         self.aurdeps = []
+        self.pkgVer = ""
         self.inrepo()
         if not self.repo:
             self.inaur()
@@ -76,3 +78,18 @@ class Package(object):
     def build(self):
         for dep in self.aurdeps:
             dep.build()
+        print("Building", self.name)
+        os.chdir(self.path)
+        results = sh.makepkg("-i", "--noconfirm")
+        for line in results.split("\n"):
+            if "Packages" in line:
+                self.pkgVer = line.split()[2]
+
+    def add(self, path, name):
+        if self.pkgVer:
+            fullPath = os.path.join(path, "%s.db.tar.gz" % (name))
+            sourcePath = os.path.join(self.path, "%s.pkg.tar.xz" % (self.pkgVer))
+            pkgPath = os.path.join(path, "%s.pkg.tar.xz" % (self.pkgVer))
+            shutil.copy(sourcePath, pkgPath)
+            repoAdd = sh.Command("repo-add")
+            repoAdd(fullPath, pkgPath)
