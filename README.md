@@ -25,7 +25,7 @@ chown build /build
 chown build /repo
 ```
 
-add packages you want to build in /etc/aur_repo/pkglist
+add packages you want to build in /etc/aur_repo/pkglist, one per line
 
 then as the build user run aur_repo.py from wherever you cloned it. Once everything is built run:
 ```
