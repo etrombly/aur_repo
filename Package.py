@@ -55,10 +55,13 @@ class Package(object):
 
     def getDeps(self):
         pkgbuild = open(os.path.join(self.path, "PKGBUILD")).read()
+        depends = []
         m = re.search("depends=\((.*?)\)", pkgbuild)
-        depends = m.group(1).replace("'", "").replace('"', '').split()
+        if m:
+            depends.extend(m.group(1).replace("'", "").replace('"', '').split())
         m = re.search("makedepends=\((.*?)\)", pkgbuild)
-        depends.extend(m.group(1).replace("'", "").replace('"', '').split())
+        if m:
+            depends.extend(m.group(1).replace("'", "").replace('"', '').split())
         for dep in depends:
             tmp = Package(dep, self.rootPath)
             if tmp.aur:
