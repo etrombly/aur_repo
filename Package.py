@@ -9,15 +9,17 @@ import os
 import shutil
 
 class Package(object):
-    def __init__(self, name, path = None):
+    def __init__(self, name, buildPath, repoPath, repoName):
         self.name = name
-        self.rootPath = path
-        self.path = os.path.join(self.rootPath, name)
+        self.buildPath = buildPath
+        self.repoPath = repoPath
+        self.repoName = repoName
+        self.path = os.path.join(self.buildPath, name)
         self.repo = False
         self.aur = False
         self.upToDate = False
         self.aurdeps = []
-        self.pkgVer = ""
+        self.pkg = ""
         self.inrepo()
         if not self.repo:
             self.inaur()
@@ -65,7 +67,7 @@ class Package(object):
         if m:
             depends.extend(m.group(1).replace("'", "").replace('"', '').split())
         for dep in depends:
-            tmp = Package(dep, self.rootPath)
+            tmp = Package(dep, self.buildPath, self.repoPath, self.repoName)
             if tmp.aur:
                 self.aurdeps.append(tmp)
             else:
@@ -83,13 +85,14 @@ class Package(object):
         results = sh.makepkg("-i", "--noconfirm")
         for line in results.split("\n"):
             if "Packages" in line:
-                self.pkgVer = line.split()[2]
+                tmp = line.split()[2]
+                self.pkg = sh.glob("%s/%s*" % (self.path,tmp))[0]
+        self.add()
 
-    def add(self, path, name):
-        if self.pkgVer:
-            fullPath = os.path.join(path, "%s.db.tar.gz" % (name))
-            sourcePath = os.path.join(self.path, "%s.pkg.tar.xz" % (self.pkgVer))
-            pkgPath = os.path.join(path, "%s.pkg.tar.xz" % (self.pkgVer))
-            shutil.copy(sourcePath, pkgPath)
+    def add(self):
+        if self.pkg:
+            dbPath = os.path.join(self.repoPath, "%s.db.tar.gz" % (self.repoName))
+            pkgPath = os.path.join(self.repoPath, os.path.basename(self.pkg))
+            shutil.copy(self.pkg, pkgPath)
             repoAdd = sh.Command("repo-add")
-            repoAdd(fullPath, pkgPath)
+            repoAdd(dbPath, pkgPath)
