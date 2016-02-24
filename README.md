@@ -5,9 +5,9 @@ I recommend running this in a container or VM to prevent installing unwanted pac
 
 prereqs:
 ```
+pacman -S darkhttpd sudo python-pip
 pip install sh
-pip install requirements
-pacman -S darkhttpd
+pip install requests
 ```
 
 then add a build user:
