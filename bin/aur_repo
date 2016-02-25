@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 from sh import sudo
-import Package
+
+from package import Package
 
 buildPath = "/build"
 repoPath = "/repo"
