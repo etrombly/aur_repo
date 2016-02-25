@@ -5,29 +5,21 @@ I recommend running this in a container or VM to prevent installing unwanted pac
 
 prereqs:
 ```
-pacman -S darkhttpd sudo python-pip
-pip install sh
-pip install requests
+pacman -S darkhttpd
 ```
 
-then add a build user:
+build:
 ```
-useradd -m -G wheel build
+git clone https://github.com/etrombly/aur_repo.git
+cd aur_repo
+makepkg -si
 ```
 
 use visudo to uncomment the nopasswd line for wheel.
 
-create a build and repo dir:
-```
-mkdir /build
-mkdir /repo
-chown build /build
-chown build /repo
-```
-
 add packages you want to build in /etc/aur_repo/pkglist, one per line
 
-then as the build user run aur_repo.py from wherever you cloned it. Once everything is built run:
+then as the build user run aur_repo. Once everything is built run:
 ```
 darkhttpd /repo
 ```

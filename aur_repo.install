@@ -1,0 +1,9 @@
+pre_install() {
+        useradd -m -G wheel build
+        mkdir /build
+        chown build /build
+        mkdir /repo
+        chown build /repo
+        mkdir /etc/aur_repo
+        touch /etc/aur_repo/pkglist
+}
