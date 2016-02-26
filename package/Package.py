@@ -96,7 +96,7 @@ class Package(object):
             results = sh.makepkg("-i", "--noconfirm")
         except sh.ErrorReturnCode_1:
             raise BuildError
-        log.write(results)
+        log.write(str(results))
         log.close()
         for line in results.split("\n"):
             if "Packages" in line:
