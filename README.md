@@ -7,6 +7,7 @@ I recommend running this in a container or VM to prevent installing unwanted pac
 git clone https://github.com/etrombly/aur_repo.git
 cd aur_repo
 makepkg -si
+systemctl start darkhttpd
 ```
 
 use visudo to uncomment the nopasswd line for wheel.
