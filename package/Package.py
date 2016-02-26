@@ -8,6 +8,10 @@ import re
 import os
 import shutil
 
+class BuildError(Exception):
+    def __init__(self):
+        pass
+
 class Package(object):
     def __init__(self, name, buildPath, repoPath, repoName):
         self.name = name
@@ -78,11 +82,22 @@ class Package(object):
                         pacman("--noconfirm", "-S", dep)
 
     def build(self):
+        log = open("/var/log/aur_repo/%s" % (self.name), "w")
         for dep in self.aurdeps:
-            dep.build()
+            try:
+                dep.build()
+            except BuildError:
+                log.write("could not build dependency %s" % (dep.name))
+                log.close()
+                return
         print("Building", self.name)
         os.chdir(self.path)
-        results = sh.makepkg("-i", "--noconfirm")
+        try:
+            results = sh.makepkg("-i", "--noconfirm")
+        except sh.ErrorReturnCode_1:
+            raise BuildError
+        log.write(results)
+        log.close()
         for line in results.split("\n"):
             if "Packages" in line:
                 tmp = line.split()[2]
