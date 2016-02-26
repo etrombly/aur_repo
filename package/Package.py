@@ -85,7 +85,7 @@ class Package(object):
                     try:
                         results = sudo.pacman("--noconfirm", "-S", dep)
                     except sh.ErrorReturnCode_1:
-                        print("Could not install dependency %s\n%s" % (dep, str(results)))
+                        print("Could not install dependency %s" % (dep))
                         raise BuildError
 
     def build(self):
