@@ -35,7 +35,10 @@ class Package(object):
                 self.pull()
                 if self.upToDate:
                     self.checkGit()
-            self.getDeps()
+            try:
+                self.getDeps()
+            except BuildError:
+                print("Aborting build of %s" % self.name)
 
     def inrepo(self):
         try:
@@ -79,8 +82,11 @@ class Package(object):
                 try:
                     pacman("-Qi", dep)
                 except sh.ErrorReturnCode_1:
-                    with sudo:
-                        pacman("--noconfirm", "-S", dep)
+                    try:
+                        results = sudo.pacman("--noconfirm", "-S", dep)
+                    except sh.ErrorReturnCode_1:
+                        print("Could not install dependency %s\n%s" % (dep, str(results)))
+                        raise BuildError
 
     def build(self):
         for dep in self.aurdeps:

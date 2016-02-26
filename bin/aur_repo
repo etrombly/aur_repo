@@ -14,4 +14,7 @@ pkglist = open("/etc/aur_repo/pkglist").read().split("\n")
 pkglist = filter(None, pkglist)
 for pkg in pkglist:
     tmp = Package.Package(pkg, buildPath, repoPath, repoName)
-    tmp.build()
+    try:
+        tmp.build()
+    except Package.BuildError:
+        pass
