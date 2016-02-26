@@ -7,6 +7,7 @@ import requests
 import re
 import os
 import shutil
+import glob
 
 class BuildError(Exception):
     def __init__(self):
@@ -82,22 +83,21 @@ class Package(object):
                         pacman("--noconfirm", "-S", dep)
 
     def build(self):
-        log = open("/var/log/aur_repo/%s" % (self.name), "w")
         for dep in self.aurdeps:
             try:
                 dep.build()
             except BuildError:
-                log.write("could not build dependency %s" % (dep.name))
-                log.close()
+                print("could not build dependency %s" % (dep.name))
                 return
         print("Building", self.name)
         os.chdir(self.path)
         try:
-            results = sh.makepkg("-i", "--noconfirm")
+            results = sh.makepkg("-i", "--noconfirm", "-L")
         except sh.ErrorReturnCode_1:
             raise BuildError
-        log.write(str(results))
-        log.close()
+        finally:
+            for file in glob.glob('%s/*.log' % (self.path)):
+                shutil.copy(file, '/var/log/aur_repo')
         for line in results.split("\n"):
             if "Packages" in line:
                 tmp = line.split()[2]
