@@ -83,6 +83,7 @@ class Package(object):
                     pacman("-Qi", dep)
                 except sh.ErrorReturnCode_1:
                     try:
+                        print("Installing dependency %s" % (dep))
                         results = sudo.pacman("--noconfirm", "-S", dep)
                     except sh.ErrorReturnCode_1:
                         print("Could not install dependency %s" % (dep))

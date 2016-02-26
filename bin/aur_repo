@@ -17,4 +17,4 @@ for pkg in pkglist:
     try:
         tmp.build()
     except Package.BuildError:
-        pass
+        print("Error while building %s" % (pkg))
