@@ -8,7 +8,7 @@ arch=('any')
 url="https://github.com/etrombly/aur_repo"
 license=('GPL')
 groups=()
-depends=('sudo' 'python' 'python-requests' 'python-sh')
+depends=('sudo' 'python' 'python-requests' 'python-sh' 'darkhttpd')
 makedepends=('git')
 optdepends=()
 checkdepends=()
@@ -32,4 +32,5 @@ package() {
   cd "$srcdir/$pkgname"
   python setup.py install --root="$pkgdir/" --optimize=1
   install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm544 darkhttpd.service "$pkgdir/etc/systemd/system/darkhttpd.service"
 }

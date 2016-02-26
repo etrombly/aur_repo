@@ -1,0 +1,9 @@
+[Unit]
+Description=Darkhttpd Webserver
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/darkhttpd /repo --uid build --gid nobody --chroot
+
+[Install]
+WantedBy=multi-user.target

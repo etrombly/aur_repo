@@ -6,4 +6,5 @@ pre_install() {
         chown build /repo
         mkdir /etc/aur_repo
         touch /etc/aur_repo/pkglist
+        systemctl enable darkhttpd --now
 }

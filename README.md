@@ -3,12 +3,7 @@ Build repo from aur packages
 
 I recommend running this in a container or VM to prevent installing unwanted packages. To install:
 
-prereqs:
-```
-pacman -S darkhttpd
-```
-
-build:
+install:
 ```
 git clone https://github.com/etrombly/aur_repo.git
 cd aur_repo
@@ -19,10 +14,7 @@ use visudo to uncomment the nopasswd line for wheel.
 
 add packages you want to build in /etc/aur_repo/pkglist, one per line
 
-then as the build user run aur_repo. Once everything is built run:
-```
-darkhttpd /repo
-```
+then as the build user run aur_repo.
 
 then on any machine that you want to sync to your aur repo add the following to /etc/pacman.conf:
 ```
