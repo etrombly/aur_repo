@@ -3,7 +3,6 @@ Build repo from aur packages
 
 I recommend running this in a container or VM to prevent installing unwanted packages. To install:
 
-install:
 ```
 git clone https://github.com/etrombly/aur_repo.git
 cd aur_repo
