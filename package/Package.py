@@ -63,7 +63,7 @@ class Package(object):
         pass
 
     def getDeps(self):
-        pkgbuild = open(os.path.join(self.path, "PKGBUILD")).read()
+        pkgbuild = open(os.path.join(self.path, "PKGBUILD"), errors="surrogateescape").read()
         depends = []
         m = re.search("depends=\((.*?)\)", pkgbuild)
         if m:
