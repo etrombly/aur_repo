@@ -32,5 +32,5 @@ package() {
   cd "$srcdir/$pkgname"
   python setup.py install --root="$pkgdir/" --optimize=1
   install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-  install -Dm544 darkhttpd.service "$pkgdir/etc/systemd/system/darkhttpd.service"
+  install -Dm544 aur_repo.service "$pkgdir/etc/systemd/system/aur_repo.service"
 }

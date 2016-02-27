@@ -1,5 +1,5 @@
 [Unit]
-Description=Darkhttpd Webserver
+Description=aur_repo server (darkhttpd)
 
 [Service]
 Type=simple
