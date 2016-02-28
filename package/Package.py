@@ -112,6 +112,10 @@ class Package(object):
         try:
             results = sh.makepkg("-d", "--noconfirm", _err="/var/log/aur_repo/%s.log" % self.name)
         except sh.ErrorReturnCode_1:
+            with open("/var/log/aur_repo/%s.log" % self.name) as log:
+                if "A package has already been built" in log.read():
+                    print("%s is up to date" % (self.name))
+                    return
             raise BuildError
         for line in open("/var/log/aur_repo/%s.log" % self.name).read().split("\n"):
             if "Finished making" in line:
