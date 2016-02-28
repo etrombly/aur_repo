@@ -68,9 +68,6 @@ class Package(object):
     def getDeps(self):
         pkgbuild = open(os.path.join(self.path, "PKGBUILD"), errors="surrogateescape").read()
         depends = []
-        m = re.search("depends=\((.*?)\)", pkgbuild)
-        if m:
-            depends.extend(m.group(1).replace("'", "").replace('"', '').split())
         m = re.search("makedepends=\((.*?)\)", pkgbuild)
         if m:
             depends.extend(m.group(1).replace("'", "").replace('"', '').split())
@@ -83,11 +80,19 @@ class Package(object):
                     pacman("-Qi", dep)
                 except sh.ErrorReturnCode_1:
                     try:
-                        print("Installing dependency %s" % (dep))
+                        print("Installing make dependency %s" % (dep))
                         results = sudo.pacman("--noconfirm", "-S", dep)
                     except sh.ErrorReturnCode_1:
-                        print("Could not install dependency %s" % (dep))
+                        print("Could not install make dependency %s" % (dep))
                         raise BuildError
+        depends = []
+        m = re.search("depends=\((.*?)\)", pkgbuild)
+        if m:
+            depends.extend(m.group(1).replace("'", "").replace('"', '').split())
+        for dep in depends:
+            tmp = Package(dep, self.buildPath, self.repoPath, self.repoName)
+            if tmp.aur:
+                self.aurdeps.append(tmp)
 
     def build(self):
         for dep in self.aurdeps:
@@ -99,15 +104,12 @@ class Package(object):
         print("Building", self.name)
         os.chdir(self.path)
         try:
-            results = sh.makepkg("-i", "--noconfirm", "-L")
+            results = sh.makepkg("-d", "--noconfirm", _err="/var/log/aur_repo/%s.log" % self.name)
         except sh.ErrorReturnCode_1:
             raise BuildError
-        finally:
-            for file in glob.glob('%s/*.log' % (self.path)):
-                shutil.copy(file, '/var/log/aur_repo')
-        for line in results.split("\n"):
-            if "Packages" in line:
-                tmp = line.split()[2]
+        for line in open("/var/log/aur_repo/%s.log" % self.name).read():
+            if "Finished making" in line:
+                tmp = line.split(":")[2].split()[0]
                 self.pkg = sh.glob("%s/%s*" % (self.path,tmp))[0]
         self.add()
 
