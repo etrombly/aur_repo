@@ -68,7 +68,7 @@ class Package(object):
     def getDeps(self):
         pkgbuild = open(os.path.join(self.path, "PKGBUILD"), errors="surrogateescape").read()
         depends = []
-        m = re.search(""^makedepends.*?=\((.*?)\)\s*$", pkgbuild, re.MULTILINE | re.DOTALL)
+        m = re.search("^makedepends.*?=\((.*?)\)\s*$", pkgbuild, re.MULTILINE | re.DOTALL)
         m = " ".join(m)
         if m:
             depends.extend(m.replace("'", "").replace('"', '').split())
