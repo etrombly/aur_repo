@@ -107,7 +107,7 @@ class Package(object):
             results = sh.makepkg("-d", "--noconfirm", _err="/var/log/aur_repo/%s.log" % self.name)
         except sh.ErrorReturnCode_1:
             raise BuildError
-        for line in open("/var/log/aur_repo/%s.log" % self.name).read():
+        for line in open("/var/log/aur_repo/%s.log" % self.name).read().split("\n"):
             if "Finished making" in line:
                 tmp = line.split(":")[2].split()[1]
                 self.pkg = sh.glob("%s/*%s*" % (self.path,tmp))[0]
