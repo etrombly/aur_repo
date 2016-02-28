@@ -69,8 +69,8 @@ class Package(object):
         pkgbuild = open(os.path.join(self.path, "PKGBUILD"), errors="surrogateescape").read()
         depends = []
         m = re.search("^makedepends.*?=\((.*?)\)\s*$", pkgbuild, re.MULTILINE | re.DOTALL)
-        m = " ".join(m)
         if m:
+            m = " ".join(m)
             depends.extend(m.replace("'", "").replace('"', '').split())
         for dep in depends:
             tmp = Package(dep, self.buildPath, self.repoPath, self.repoName)
@@ -90,8 +90,8 @@ class Package(object):
                         raise BuildError
         depends = []
         m = re.findall("^depends.*?=\((.*?)\)\s*$", pkgbuild, re.MULTILINE | re.DOTALL)
-        m = " ".join(m)
         if m:
+            m = " ".join(m)
             depends.extend(m.replace("'", "").replace('"', '').split())
         for dep in depends:
             tmp = Package(dep, self.buildPath, self.repoPath, self.repoName)
