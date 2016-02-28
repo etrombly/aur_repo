@@ -68,9 +68,10 @@ class Package(object):
     def getDeps(self):
         pkgbuild = open(os.path.join(self.path, "PKGBUILD"), errors="surrogateescape").read()
         depends = []
-        m = re.search("makedepends=\((.*?)\)", pkgbuild)
+        m = re.search(""^makedepends.*?=\((.*?)\)\s*$", pkgbuild, re.MULTILINE | re.DOTALL)
+        m = " ".join(m)
         if m:
-            depends.extend(m.group(1).replace("'", "").replace('"', '').split())
+            depends.extend(m.replace("'", "").replace('"', '').split())
         for dep in depends:
             tmp = Package(dep, self.buildPath, self.repoPath, self.repoName)
             if not tmp.aur and not tmp.repo:
@@ -88,9 +89,10 @@ class Package(object):
                         print("Could not install make dependency %s" % (dep))
                         raise BuildError
         depends = []
-        m = re.search("depends=\((.*?)\)", pkgbuild)
+        m = re.findall("^depends.*?=\((.*?)\)\s*$", pkgbuild, re.MULTILINE | re.DOTALL)
+        m = " ".join(m)
         if m:
-            depends.extend(m.group(1).replace("'", "").replace('"', '').split())
+            depends.extend(m.replace("'", "").replace('"', '').split())
         for dep in depends:
             tmp = Package(dep, self.buildPath, self.repoPath, self.repoName)
             if not tmp.aur and not tmp.repo:
