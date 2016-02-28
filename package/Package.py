@@ -73,6 +73,8 @@ class Package(object):
             depends.extend(m.group(1).replace("'", "").replace('"', '').split())
         for dep in depends:
             tmp = Package(dep, self.buildPath, self.repoPath, self.repoName)
+            if not tmp.aur and not tmp.repo:
+                print("Could not find make dependency %s" % (dep))
             if tmp.aur:
                 self.aurdeps.append(tmp)
             else:
@@ -91,6 +93,8 @@ class Package(object):
             depends.extend(m.group(1).replace("'", "").replace('"', '').split())
         for dep in depends:
             tmp = Package(dep, self.buildPath, self.repoPath, self.repoName)
+            if not tmp.aur and not tmp.repo:
+                print("Could not find dependency %s" % (dep))
             if tmp.aur:
                 self.aurdeps.append(tmp)
 
