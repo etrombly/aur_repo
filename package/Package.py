@@ -109,8 +109,7 @@ class Package(object):
             raise BuildError
         for line in open("/var/log/aur_repo/%s.log" % self.name).read():
             if "Finished making" in line:
-                tmp = line.split(":")[2].split()[0:2]
-                tmp = "-".join(tmp)
+                tmp = line.split(":")[2].split()[1]
                 self.pkg = sh.glob("%s/*%s*" % (self.path,tmp))[0]
         self.add()
 
