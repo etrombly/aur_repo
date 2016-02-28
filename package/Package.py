@@ -117,6 +117,9 @@ class Package(object):
                     print("%s is up to date" % (self.name))
                     return
             raise BuildError
+        except sh.ErrorReturnCode_2:
+            print("Error building %s, see /var/log/aur_repo/%s.log" % (self.name, self.name))
+            raise BuildError
         for line in open("/var/log/aur_repo/%s.log" % self.name).read().split("\n"):
             if "Finished making" in line:
                 tmp = line.split(":")[1].split()[1]
