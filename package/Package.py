@@ -97,8 +97,18 @@ class Package(object):
             tmp = Package(dep, self.buildPath, self.repoPath, self.repoName)
             if not tmp.aur and not tmp.repo:
                 print("Could not find dependency %s" % (dep))
-            if tmp.aur:
+            elif tmp.aur:
                 self.aurdeps.append(tmp)
+            else:
+                try:
+                    pacman("-Qi", dep)
+                except sh.ErrorReturnCode_1:
+                    try:
+                        print("Installing dependency %s" % (dep))
+                        results = sudo.pacman("--noconfirm", "-S", dep)
+                    except sh.ErrorReturnCode_1:
+                        print("Could not install dependency %s" % (dep))
+                        raise BuildError 
 
     def build(self):
         for dep in self.aurdeps:
